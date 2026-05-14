@@ -1,24 +1,37 @@
-<h2>Welcome, {{ user[1] }}</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
 
-<p>Email: {{ user[3] }}</p>
-<p>Group: {{ user[4] }}</p>
+<h1>🎓 Student Dashboard</h1>
 
-<hr>
-
-<h3>Grades</h3>
-
-{% if grades %}
-    <ul>
-        {% for g in grades %}
-            <li>{{ g[0] }}: {{ g[1] }}</li>
-        {% endfor %}
-    </ul>
-
-    <h3>Average: {{ avg }}</h3>
-{% else %}
-    <p>No grades yet</p>
-{% endif %}
+<p><b>User:</b> {{ user[1] }}</p>
+<p><b>Average:</b> {{ avg }}</p>
 
 <hr>
 
-<a href="/logout">Logout</a>
+<h2>📊 Grades</h2>
+
+<table border="1" cellpadding="10">
+<tr>
+    <th>Subject</th>
+    <th>Grade</th>
+</tr>
+
+{% for g in grades %}
+<tr>
+    <td>{{ g[0] }}</td>
+    <td>{{ g[1] }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/logout">Logout 🚪</a>
+
+</body>
+</html>
