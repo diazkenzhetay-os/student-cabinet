@@ -2,36 +2,41 @@
 <html>
 <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+
+<div class="container" style="width: 700px;">
 
 <h1>🎓 Student Dashboard</h1>
 
 <p><b>User:</b> {{ user[1] }}</p>
-<p><b>Average:</b> {{ avg }}</p>
+<p><b>Average Grade:</b> {{ avg }}</p>
 
 <hr>
 
 <h2>📊 Grades</h2>
 
-<table border="1" cellpadding="10">
-<tr>
-    <th>Subject</th>
-    <th>Grade</th>
-</tr>
+<table border="1">
+    <tr>
+        <th>Subject</th>
+        <th>Grade</th>
+    </tr>
 
-{% for g in grades %}
-<tr>
-    <td>{{ g[0] }}</td>
-    <td>{{ g[1] }}</td>
-</tr>
-{% endfor %}
+    {% for g in grades %}
+    <tr>
+        <td>{{ g[0] }}</td>
+        <td>{{ g[1] }}</td>
+    </tr>
+    {% endfor %}
 
 </table>
 
 <br>
 
-<a href="/logout">Logout 🚪</a>
+<a href="/logout">🚪 Logout</a>
+
+</div>
 
 </body>
 </html>
