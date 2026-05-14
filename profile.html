@@ -1,0 +1,24 @@
+<h2>Welcome, {{ user[1] }}</h2>
+
+<p>Email: {{ user[3] }}</p>
+<p>Group: {{ user[4] }}</p>
+
+<hr>
+
+<h3>Grades</h3>
+
+{% if grades %}
+    <ul>
+        {% for g in grades %}
+            <li>{{ g[0] }}: {{ g[1] }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Average: {{ avg }}</h3>
+{% else %}
+    <p>No grades yet</p>
+{% endif %}
+
+<hr>
+
+<a href="/logout">Logout</a>
