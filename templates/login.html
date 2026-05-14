@@ -2,18 +2,23 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+
+<div class="container">
 
 <h2>🔐 Login</h2>
 
 <form method="POST">
-    <input name="username" placeholder="Username"><br><br>
-    <input name="password" type="password" placeholder="Password"><br><br>
+    <input name="username" placeholder="Username" required><br>
+    <input name="password" type="password" placeholder="Password" required><br>
     <button type="submit">Login</button>
 </form>
 
 <p>No account? <a href="/register">Register</a></p>
+
+</div>
 
 </body>
 </html>
