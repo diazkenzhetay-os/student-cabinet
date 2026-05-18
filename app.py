@@ -12,7 +12,7 @@ def init_db():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
-    # Таблица пользователей
+    # USERS
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +21,7 @@ def init_db():
         )
     """)
 
-    # Таблица оценок
+    # GRADES
     c.execute("""
         CREATE TABLE IF NOT EXISTS grades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,14 +49,16 @@ def home():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+
     if request.method == "POST":
+
         username = request.form["username"]
         password = request.form["password"]
 
         conn = sqlite3.connect("database.db")
         c = conn.cursor()
 
-        # Проверяем существует ли пользователь
+        # Проверка пользователя
         c.execute(
             "SELECT * FROM users WHERE username=?",
             (username,)
@@ -68,10 +70,10 @@ def register():
             conn.close()
             return "Пользователь уже существует"
 
-        # Хешируем пароль
+        # Хеш пароля
         hashed_password = generate_password_hash(password)
 
-        # Добавляем пользователя
+        # Добавление пользователя
         c.execute(
             "INSERT INTO users (username, password) VALUES (?, ?)",
             (username, hashed_password)
@@ -79,15 +81,14 @@ def register():
 
         conn.commit()
 
-        # Получаем ID пользователя
         user_id = c.lastrowid
 
-        # Добавляем пример оценок
+        # Оценки
         subjects = [
-            ("Mathematics", 95),
-            ("Physics", 88),
-            ("Programming", 100),
-            ("English", 90)
+            ("Математика", 95),
+            ("Физика", 88),
+            ("Программирование", 100),
+            ("Английский", 90)
         ]
 
         for subject, grade in subjects:
@@ -108,9 +109,16 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
+
         username = request.form["username"]
         password = request.form["password"]
+
+        # Логин преподавателя
+        if username == "teacher" and password == "teacher123":
+            session["teacher"] = True
+            return redirect("/admin")
 
         conn = sqlite3.connect("database.db")
         c = conn.cursor()
@@ -125,7 +133,9 @@ def login():
         conn.close()
 
         if user and check_password_hash(user[2], password):
+
             session["user_id"] = user[0]
+
             return redirect("/profile")
 
         return "Неверный логин или пароль"
@@ -178,35 +188,41 @@ def profile():
     )
 
 
+# ---------------- ADMIN PANEL ----------------
+
+@app.route("/admin")
+def admin():
+
+    if "teacher" not in session:
+        return redirect("/login")
+
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT users.username, grades.subject, grades.grade
+        FROM grades
+        JOIN users ON grades.user_id = users.id
+    """)
+
+    data = c.fetchall()
+
+    conn.close()
+
+    return render_template("admin.html", data=data)
+
+
 # ---------------- LOGOUT ----------------
 
 @app.route("/logout")
 def logout():
+
     session.clear()
+
     return redirect("/login")
 
 
 # ---------------- RUN ----------------
 
 if __name__ == "__main__":
-    @app.route("/admin")
-    def admin():
-
-        if "user_id" not in session:
-            return redirect("/login")
-
-        conn = sqlite3.connect("database.db")
-        c = conn.cursor()
-
-        c.execute("""
-            SELECT users.username, grades.subject, grades.grade
-            FROM grades
-            JOIN users ON grades.user_id = users.id
-        """)
-
-        data = c.fetchall()
-
-        conn.close()
-
-        return render_template("admin.html", data=data)
     app.run(host="0.0.0.0", port=5000)
