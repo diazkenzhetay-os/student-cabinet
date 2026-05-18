@@ -1,35 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+
 <head>
+    <meta charset="UTF-8">
     <title>Admin Panel</title>
+
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
 
 <div class="container" style="width: 900px;">
 
-<h1>👨‍🏫 Teacher Admin Panel</h1>
+    <h1>👨‍🏫 Teacher Admin Panel</h1>
 
-<table border="1" width="100%">
-    <tr>
-        <th>Student</th>
-        <th>Subject</th>
-        <th>Grade</th>
-    </tr>
+    <table border="1" width="100%">
 
-    {% for item in data %}
-    <tr>
-        <td>{{ item[0] }}</td>
-        <td>{{ item[1] }}</td>
-        <td>{{ item[2] }}</td>
-    </tr>
-    {% endfor %}
+        <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Grade</th>
+        </tr>
 
-</table>
+        {% for item in data %}
 
-<br>
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+        </tr>
 
-<a href="/logout">Logout 🚪</a>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <a href="/logout">🚪 Logout</a>
 
 </div>
 
