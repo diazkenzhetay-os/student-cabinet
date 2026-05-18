@@ -9,6 +9,7 @@ app.secret_key = "student_secret_key"
 # ---------------- DATABASE ----------------
 
 def init_db():
+
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
@@ -92,6 +93,7 @@ def register():
         ]
 
         for subject, grade in subjects:
+
             c.execute(
                 "INSERT INTO grades (user_id, subject, grade) VALUES (?, ?, ?)",
                 (user_id, subject, grade)
@@ -115,9 +117,11 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        # Логин преподавателя
+        # ЛОГИН ПРЕПОДА
         if username == "teacher" and password == "teacher123":
+
             session["teacher"] = True
+
             return redirect("/admin")
 
         conn = sqlite3.connect("database.db")
@@ -154,7 +158,7 @@ def profile():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
-    # Пользователь
+    # USER
     c.execute(
         "SELECT * FROM users WHERE id=?",
         (session["user_id"],)
@@ -162,7 +166,7 @@ def profile():
 
     user = c.fetchone()
 
-    # Оценки
+    # GRADES
     c.execute(
         "SELECT subject, grade FROM grades WHERE user_id=?",
         (session["user_id"],)
@@ -172,11 +176,11 @@ def profile():
 
     conn.close()
 
-    # Средний балл
+    # AVERAGE
     grades_list = [g[1] for g in grades]
 
     avg = (
-        sum(grades_list) / len(grades_list)
+        round(sum(grades_list) / len(grades_list), 2)
         if grades_list else 0
     )
 
@@ -199,17 +203,65 @@ def admin():
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
 
-    c.execute("""
-        SELECT users.username, grades.subject, grades.grade
-        FROM grades
-        JOIN users ON grades.user_id = users.id
-    """)
+    c.execute("SELECT id, username FROM users")
 
-    data = c.fetchall()
+    users = c.fetchall()
+
+    students = []
+
+    for user in users:
+
+        user_id = user[0]
+        username = user[1]
+
+        c.execute(
+            "SELECT subject, grade FROM grades WHERE user_id=?",
+            (user_id,)
+        )
+
+        grades = c.fetchall()
+
+        grade_dict = {
+            "username": username,
+            "math": "-",
+            "physics": "-",
+            "programming": "-",
+            "english": "-",
+            "average": 0
+        }
+
+        grade_values = []
+
+        for subject, grade in grades:
+
+            if subject == "Математика":
+                grade_dict["math"] = grade
+
+            elif subject == "Физика":
+                grade_dict["physics"] = grade
+
+            elif subject == "Программирование":
+                grade_dict["programming"] = grade
+
+            elif subject == "Английский":
+                grade_dict["english"] = grade
+
+            grade_values.append(grade)
+
+        if grade_values:
+
+            grade_dict["average"] = round(
+                sum(grade_values) / len(grade_values), 2
+            )
+
+        students.append(grade_dict)
 
     conn.close()
 
-    return render_template("admin.html", data=data)
+    return render_template(
+        "admin.html",
+        students=students
+    )
 
 
 # ---------------- LOGOUT ----------------
