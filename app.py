@@ -189,4 +189,24 @@ def logout():
 # ---------------- RUN ----------------
 
 if __name__ == "__main__":
+    @app.route("/admin")
+    def admin():
+
+        if "user_id" not in session:
+            return redirect("/login")
+
+        conn = sqlite3.connect("database.db")
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT users.username, grades.subject, grades.grade
+            FROM grades
+            JOIN users ON grades.user_id = users.id
+        """)
+
+        data = c.fetchall()
+
+        conn.close()
+
+        return render_template("admin.html", data=data)
     app.run(host="0.0.0.0", port=5000)
